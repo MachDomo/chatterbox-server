@@ -86,7 +86,7 @@ var requestHandler = function(request, response) {
       body = querystring.parse(body);
       if (body) {
         data.push(body);
-        console.log('Post data message', body);
+        console.log('Post data message', data);
         response.end(JSON.stringify({results: body}));
       } else {
         response.end(JSON.stringify({results: 'No message sent'}));
@@ -109,7 +109,7 @@ var requestHandler = function(request, response) {
     handleOptions();
   } else {
     response.writeHead(404, headers);
-    response.end('404 error', JSON.stringify(request));
+    response.end('404 error');
   }
 };
 
