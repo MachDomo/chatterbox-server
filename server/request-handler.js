@@ -86,17 +86,21 @@ var requestHandler = function(request, response) {
       body.push(chunk);
     }).on('end', () => {
       body = Buffer.concat(body).toString();
-      body = querystring.parse(body);
+
+      if (body[0] === '{') {
+        body = JSON.parse(body);
+      } else {
+        body = querystring.parse(body);
+      }
+
       if (body) {
         data.push(body);
-        console.log('Post data message', data);
         response.end(JSON.stringify({results: body}));
       } else {
         response.end(JSON.stringify({results: 'No message sent'}));
       }
     });
 
-    console.log('handlePost invoked', body);
   };
 
   let handleOptions = function() {
