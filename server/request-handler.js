@@ -80,12 +80,21 @@ var requestHandler = function(request, response) {
     response.writeHead(statusCode, headers);
 
     let body = [];
+
     request.on('error', (err) => {
       console.error(err);
-    }).on('data', (chunk) => {
+    });
+
+    request.on('data', (chunk) => {
       body.push(chunk);
-    }).on('end', () => {
-      body = Buffer.concat(body).toString();
+    });
+
+    request.on('end', () => {
+      if (typeof body[0] !== 'string') {
+        body = Buffer.concat(body).toString();
+      } else {
+        body = body[0];
+      }
 
       if (body[0] === '{') {
         body = JSON.parse(body);
@@ -94,6 +103,7 @@ var requestHandler = function(request, response) {
       }
 
       if (body) {
+        body.objectId = data.length;
         data.push(body);
         response.end(JSON.stringify({results: body}));
       } else {
@@ -108,6 +118,8 @@ var requestHandler = function(request, response) {
     response.end();
   };
 
+
+  // Decision Maker
   if (request.method === 'GET' && request.url === '/classes/messages') {
     handleGet();
   } else if (request.method === 'POST' && request.url === '/classes/messages') {
